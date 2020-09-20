@@ -17,6 +17,8 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="students")
 public class Student {
@@ -35,6 +37,7 @@ public class Student {
 	private Date createdAt;
 	private Date updatedAt;
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "courses_students",

@@ -17,7 +17,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-
 @Entity
 @Table(name="courses")
 public class Course {
@@ -33,6 +32,7 @@ public class Course {
 	private Date createdAt;
 	private Date updatedAt;
 	
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "courses_students",

@@ -3,6 +3,8 @@ package io.people.api.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import io.people.api.models.Course;
@@ -16,6 +18,10 @@ public class CourseService {
 	
 	public List<Course> allCourses(){
 		return courseRepo.findAll();
+	}
+	
+	public Page<Course> allCourses(Pageable pageable){
+		return courseRepo.findAll(pageable);
 	}
 	
 	public Course getCurse(Long id) {
