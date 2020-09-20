@@ -29,7 +29,7 @@ public class Student {
 	private String rut;
 	private String name;
 	private String lastName;
-	@Min(19)
+	@Min(value= 19, message = "Age must be greater than 18 years")
 	private Integer age;
 	private String course;
 	

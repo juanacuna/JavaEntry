@@ -1,12 +1,17 @@
 package io.people.api.controllers;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,27 +43,42 @@ public class CourseController {
 	}
 	
 	@GetMapping("/courses/{id}")
-	public Course getCourse(@PathVariable Long id) {
-		return courseService.getCurse(id);
+	public ResponseEntity<Course> getCourse(@PathVariable Long id) {
+		try {
+			Course c = courseService.getCurse(id);
+			return new ResponseEntity<Course>(c, HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<Course>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@PostMapping("/courses")
-	public void addCourse(@RequestBody Course course) {
+	public ResponseEntity<?> addCourse(@Valid @RequestBody Course course) {
 		courseService.saveCourse(course);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/courses/{id}")
-	public void updateCourse(@RequestBody Course course,
+	public ResponseEntity<?> updateCourse(@RequestBody Course course,
 							 @PathVariable ("id") Long id) {
-		Course c = courseService.getCurse(id);
-		c.setName(course.getName());
-		c.setCode(course.getCode());
-		courseService.saveCourse(c);
+		try {
+			Course c = courseService.getCurse(id);
+			c.setName(course.getName());
+			c.setCode(course.getCode());
+			courseService.saveCourse(c);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@DeleteMapping("/courses/{id}")
-	public void delCourse(@PathVariable ("id") Long id) {
-		courseService.delCourse(id);
+	public ResponseEntity<?> delCourse(@PathVariable ("id") Long id) {
+		try {
+			courseService.delCourse(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
-	
 }

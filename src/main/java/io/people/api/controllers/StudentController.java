@@ -1,12 +1,17 @@
 package io.people.api.controllers;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,29 +43,46 @@ public class StudentController {
 	}
 	
 	@GetMapping("/students/{id}")
-	public Student getStudent(@PathVariable ("id") Long id) {
-		return studentService.getStudent(id);
+	public ResponseEntity<Student> getStudent(@PathVariable ("id") Long id) {
+		try {
+			Student s = studentService.getStudent(id);
+			return new ResponseEntity<Student>(s,HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<Student>(HttpStatus.NOT_FOUND);
+		} 
 	}
 	
 	@PostMapping("/students")
-	public void addStudent(@RequestBody Student student) {
+	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
 		studentService.saveStudent(student);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/course/{id}")
-	public void delStudent(@RequestBody Student student,
+	public ResponseEntity<?> delStudent(@RequestBody Student student,
 						   @PathVariable ("id") Long id) {
 		Student s = studentService.getStudent(id);
-		s.setRut(student.getRut());
-		s.setName(student.getName());
-		s.setLastName(student.getLastName());
-		s.setAge(student.getAge());
-		s.setCourse(student.getCourse());
-		studentService.saveStudent(s);
+		
+		try {
+			s.setRut(student.getRut());
+			s.setName(student.getName());
+			s.setLastName(student.getLastName());
+			s.setAge(student.getAge());
+			s.setCourse(student.getCourse());
+			studentService.saveStudent(s);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@DeleteMapping
-	public void delStudent(@PathVariable ("id") Long id) {
-		studentService.delStudent(id);
+	public ResponseEntity<?> delStudent(@PathVariable ("id") Long id) {
+		try {
+			studentService.delStudent(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 }
