@@ -36,4 +36,29 @@ public class StudentService {
 		studentRepo.deleteById(id);
 	}
 
+	public boolean validRut(String rut) {
+		boolean isValid = false;
+		if(rut != null && rut.trim().length() > 0) {
+			try {
+				rut = rut.replaceAll("[.]", "").replaceAll("-", "").trim().toUpperCase();
+				char vDigit = rut.charAt(rut.length()-1);
+				int tempRut = Integer.parseInt(rut.substring(0, rut.length() - 1));
+				int m = 0, s = 1;
+				for(;tempRut != 0; tempRut /= 10) {
+					s = (s + tempRut % 10 * (9 - m++ % 6)) % 11;
+				}
+				if (vDigit == (char) (s !=0 ? s + 47 : 75)) {
+					isValid = true;
+				}
+			} catch (Exception e) {
+				return isValid;
+			}
+		}
+		return isValid;
+	}
+	
+	
+	
+	
+	
 }

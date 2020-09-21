@@ -54,29 +54,44 @@ public class StudentController {
 	
 	@PostMapping("/students")
 	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
-		studentService.saveStudent(student);
-		return new ResponseEntity<>(HttpStatus.CREATED);
-	}
-	
-	@PutMapping("/course/{id}")
-	public ResponseEntity<?> delStudent(@RequestBody Student student,
-						   @PathVariable ("id") Long id) {
-		Student s = studentService.getStudent(id);
-		
-		try {
-			s.setRut(student.getRut());
-			s.setName(student.getName());
-			s.setLastName(student.getLastName());
-			s.setAge(student.getAge());
-			s.setCourse(student.getCourse());
-			studentService.saveStudent(s);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (NoSuchElementException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		if (studentService.validRut(student.getRut())) {
+			try {
+				studentService.saveStudent(student);
+				return new ResponseEntity<>(HttpStatus.CREATED);
+			} catch (NoSuchElementException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		}else {
+			return new ResponseEntity<>(
+					"Digit validator does not match the rut received or the format is invalid",
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@DeleteMapping
+	@PutMapping("/students/{id}")
+	public ResponseEntity<?> delStudent(@Valid @RequestBody Student student,
+						   @PathVariable ("id") Long id) {
+		if (studentService.validRut(student.getRut())) {
+			try {
+				Student s = studentService.getStudent(id);
+				s.setRut(student.getRut());
+				s.setName(student.getName());
+				s.setLastName(student.getLastName());
+				s.setAge(student.getAge());
+				s.setCourse(student.getCourse());
+				studentService.saveStudent(s);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (NoSuchElementException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		}else {
+			return new ResponseEntity<>(
+					"Digit validator does not match the rut received or the format is invalid",
+					HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@DeleteMapping("/students/{id}")
 	public ResponseEntity<?> delStudent(@PathVariable ("id") Long id) {
 		try {
 			studentService.delStudent(id);
