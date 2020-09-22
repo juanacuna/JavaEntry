@@ -1,5 +1,6 @@
 package io.people.api.controllers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +33,18 @@ public class CourseController {
 	@Autowired
 	private CourseService courseService;
 	
-	@GetMapping("/courses/all")
+	/*@GetMapping("/courses/all")
 	public List<Course> allCourses(){
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		return courseService.allCourses();
+	}*/
+	@GetMapping("/courses/all")
+	public ResponseEntity<?> allCourse() {
+		List<Course> c = courseService.allCourses();
+		return new ResponseEntity<List<Course>>(c, HttpStatus.OK);
 	}
+	
 	
 	@GetMapping("/courses")
 	public Page<Course> coursesPage(@RequestParam Optional<Integer> page,
