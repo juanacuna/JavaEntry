@@ -28,12 +28,20 @@ public class CourseService {
 		return courseRepo.findById(id).get();
 	}
 	
+	public Boolean existCourse(String name) {
+		return courseRepo.existsByName(name);
+	}
+	
 	public void saveCourse(Course c) {
 		courseRepo.save(c);
 	}
 	
 	public void delCourse(Long id) {
 		courseRepo.deleteById(id);
+	}
+	
+	public Course getCourseByName(String name) {
+		return courseRepo.getByName(name);
 	}
 	
 }

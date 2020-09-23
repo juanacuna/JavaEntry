@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.people.api.models.Course;
 import io.people.api.models.Student;
+import io.people.api.services.CourseService;
 import io.people.api.services.StudentService;
 
 @RestController
@@ -29,6 +31,9 @@ public class StudentController {
 
 	@Autowired
 	private StudentService studentService;
+	
+	@Autowired
+	private CourseService courseService;
 	
 	@GetMapping("/students/all")
 	public List<Student> allStudents(){
@@ -55,11 +60,19 @@ public class StudentController {
 	@PostMapping("/students")
 	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
 		if (studentService.validRut(student.getRut())) {
-			try {
-				studentService.saveStudent(student);
-				return new ResponseEntity<>(HttpStatus.CREATED);
-			} catch (NoSuchElementException e) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			if(courseService.existCourse(student.getCourse())) {
+				try {
+					Course c = courseService.getCourseByName(student.getCourse());
+					c.getStudents().add(student);
+					studentService.saveStudent(student);
+					return new ResponseEntity<>(HttpStatus.CREATED);
+				} catch (NoSuchElementException e) {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
+			}else {
+				return new ResponseEntity<>(
+					"Course not exist, please check and try again",
+					HttpStatus.BAD_REQUEST);
 			}
 		}else {
 			return new ResponseEntity<>(
@@ -72,17 +85,25 @@ public class StudentController {
 	public ResponseEntity<?> delStudent(@Valid @RequestBody Student student,
 						   @PathVariable ("id") Long id) {
 		if (studentService.validRut(student.getRut())) {
-			try {
-				Student s = studentService.getStudent(id);
-				s.setRut(student.getRut());
-				s.setName(student.getName());
-				s.setLastName(student.getLastName());
-				s.setAge(student.getAge());
-				s.setCourse(student.getCourse());
-				studentService.saveStudent(s);
-				return new ResponseEntity<>(HttpStatus.OK);
-			} catch (NoSuchElementException e) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			if(courseService.existCourse(student.getCourse())) {
+				try {
+					Student s = studentService.getStudent(id);
+					s.setRut(student.getRut());
+					s.setName(student.getName());
+					s.setLastName(student.getLastName());
+					s.setAge(student.getAge());
+					s.setCourse(student.getCourse());
+					Course c = courseService.getCourseByName(student.getCourse());
+					c.getStudents().add(student);
+					studentService.saveStudent(s);
+					return new ResponseEntity<>(HttpStatus.OK);
+				} catch (NoSuchElementException e) {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
+			}else {
+				return new ResponseEntity<>(
+					"Course not exist, please check and try again",
+					HttpStatus.BAD_REQUEST);
 			}
 		}else {
 			return new ResponseEntity<>(

@@ -1,23 +1,17 @@
 package io.people.api.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="students")
@@ -36,14 +30,6 @@ public class Student {
 	@Column(updatable = false)
 	private Date createdAt;
 	private Date updatedAt;
-	
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "courses_students",
-			joinColumns = @JoinColumn(name = "student_id"),
-			inverseJoinColumns = @JoinColumn(name = "course_id"))
-	private List<Course> signups;
 	
 	public Student() {
 	}
@@ -122,12 +108,4 @@ public class Student {
 		this.updatedAt = updatedAt;
 	}
 
-	public List<Course> getSignups() {
-		return signups;
-	}
-
-	public void setSignups(List<Course> signups) {
-		this.signups = signups;
-	}
-	
 }

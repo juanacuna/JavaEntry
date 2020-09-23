@@ -41,6 +41,9 @@ public class CourseController {
 	}*/
 	@GetMapping("/courses/all")
 	public ResponseEntity<?> allCourse() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setAccept(Arrays.asList(new MediaType[] {MediaType.APPLICATION_JSON}));
 		List<Course> c = courseService.allCourses();
 		return new ResponseEntity<List<Course>>(c, HttpStatus.OK);
 	}

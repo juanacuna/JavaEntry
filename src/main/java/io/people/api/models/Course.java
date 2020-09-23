@@ -1,17 +1,16 @@
 package io.people.api.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -27,18 +26,14 @@ public class Course {
 	private String name;
 	@Size(max = 4, message = "Course code should be up to 4 characters")
 	private String code;
+	@OneToMany(cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private List<Student> students = new ArrayList<>();
 	
 	@Column(updatable = false)
 	private Date createdAt;
 	private Date updatedAt;
 	
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "courses_students",
-			joinColumns = @JoinColumn(name = "course_id"),
-			inverseJoinColumns = @JoinColumn(name = "student_id"))
-	private List<Student> signups;
 	
 	public Course() {
 	}
@@ -93,11 +88,13 @@ public class Course {
 		this.updatedAt = updatedAt;
 	}
 
-	public List<Student> getSignups() {
-		return signups;
+	public List<Student> getStudents() {
+		return students;
 	}
 
-	public void setSignups(List<Student> signups) {
-		this.signups = signups;
+	public void setStudents(List<Student> students) {
+		this.students = students;
 	}
+	
+
 }

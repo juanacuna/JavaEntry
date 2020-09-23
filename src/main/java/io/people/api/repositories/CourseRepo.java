@@ -14,4 +14,6 @@ public interface CourseRepo extends JpaRepository<Course, Long>{
 	
 	List<Course> findAll();
 	Page<Course> findAll(Pageable pageable);
+	Boolean existsByName(String name);
+	Course getByName(String name);
 }
