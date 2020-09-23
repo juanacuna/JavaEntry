@@ -1,10 +1,13 @@
 package io.people.api.services;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import io.people.api.models.Course;
@@ -42,6 +45,13 @@ public class CourseService {
 	
 	public Course getCourseByName(String name) {
 		return courseRepo.getByName(name);
+	}
+	
+	public HttpHeaders httpHeader() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return headers;
 	}
 	
 }

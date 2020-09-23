@@ -96,5 +96,14 @@ public class Course {
 		this.students = students;
 	}
 	
+	public void removeStudent(Student s) {
+		for (int i = 0; i < this.students.size(); i++) {
+			Student student = this.students.get(i);
+			if (student.getId() == s.getId()) {
+				this.students.remove(i);
+				return;
+			}
+		}
+	}
 
 }

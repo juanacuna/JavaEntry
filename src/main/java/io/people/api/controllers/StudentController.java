@@ -1,6 +1,5 @@
 package io.people.api.controllers;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,24 +34,26 @@ public class StudentController {
 	private CourseService courseService;
 	
 	@GetMapping("/students/all")
-	public List<Student> allStudents(){
-		return studentService.allStundents();
+	public ResponseEntity<?>  allStudents(){
+		return ResponseEntity.ok().headers(studentService.httpHeader())
+				.body(studentService.allStundents());
 	}
 	
 	@GetMapping("/students")
-	public Page<Student> studentsPage(@RequestParam Optional<Integer> page,
+	public ResponseEntity<Page<Student>> studentsPage(@RequestParam Optional<Integer> page,
 									  @RequestParam Optional<String> sortBy){
-		return studentService.allStudents(PageRequest.of(
-				page.orElse(0), 5, Sort.Direction.ASC, sortBy.orElse("id")));
+		return ResponseEntity.ok().headers(courseService.httpHeader())
+				.body(studentService.allStudents(PageRequest.of(page.orElse(0),
+						5, Sort.Direction.ASC, sortBy.orElse("id"))));
 	}
 	
 	@GetMapping("/students/{id}")
-	public ResponseEntity<Student> getStudent(@PathVariable ("id") Long id) {
+	public ResponseEntity<?> getStudent(@PathVariable ("id") Long id) {
 		try {
-			Student s = studentService.getStudent(id);
-			return new ResponseEntity<Student>(s,HttpStatus.OK);
+			return ResponseEntity.ok().headers(studentService.httpHeader())
+					.body(studentService.getStudent(id));
 		} catch (NoSuchElementException e) {
-			return new ResponseEntity<Student>(HttpStatus.NOT_FOUND);
+			return ResponseEntity.status(404).body("Student not Found!");
 		} 
 	}
 	
@@ -61,23 +61,17 @@ public class StudentController {
 	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
 		if (studentService.validRut(student.getRut())) {
 			if(courseService.existCourse(student.getCourse())) {
-				try {
-					Course c = courseService.getCourseByName(student.getCourse());
-					c.getStudents().add(student);
-					studentService.saveStudent(student);
-					return new ResponseEntity<>(HttpStatus.CREATED);
-				} catch (NoSuchElementException e) {
-					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-				}
+				Course c = courseService.getCourseByName(student.getCourse());
+				c.getStudents().add(student);
+				studentService.saveStudent(student);
+				return ResponseEntity.status(201).headers(studentService.httpHeader()).body("Created Ok!");
 			}else {
-				return new ResponseEntity<>(
-					"Course not exist, please check and try again",
-					HttpStatus.BAD_REQUEST);
+				return ResponseEntity
+						.status(400).body("Course not exist, please check and try again");
 			}
 		}else {
-			return new ResponseEntity<>(
-					"Digit validator does not match the rut received or the format is invalid",
-					HttpStatus.BAD_REQUEST);
+			return ResponseEntity
+					.status(400).body("Digit validator does not match the rut received or the format is invalid");
 		}
 	}
 	
@@ -94,31 +88,31 @@ public class StudentController {
 					s.setAge(student.getAge());
 					s.setCourse(student.getCourse());
 					Course c = courseService.getCourseByName(student.getCourse());
-					c.getStudents().add(student);
 					studentService.saveStudent(s);
-					return new ResponseEntity<>(HttpStatus.OK);
+					return ResponseEntity.status(200).headers(studentService.httpHeader()).body("Updated Ok!");
 				} catch (NoSuchElementException e) {
-					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+					return ResponseEntity.status(404).body("Student not Found!");
 				}
 			}else {
-				return new ResponseEntity<>(
-					"Course not exist, please check and try again",
-					HttpStatus.BAD_REQUEST);
+				return ResponseEntity
+						.status(400).body("Course not exist, please check and try again");
 			}
 		}else {
-			return new ResponseEntity<>(
-					"Digit validator does not match the rut received or the format is invalid",
-					HttpStatus.BAD_REQUEST);
+			return ResponseEntity
+					.status(400).body("Digit validator does not match the rut received or the format is invalid");
 		}
 	}
 	
 	@DeleteMapping("/students/{id}")
 	public ResponseEntity<?> delStudent(@PathVariable ("id") Long id) {
 		try {
+			Student s = studentService.getStudent(id);
+			Course c = courseService.getCourseByName(s.getCourse());
+			c.removeStudent(s);
 			studentService.delStudent(id);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return ResponseEntity.status(200).body("Studet has been deleted!");
 		} catch (NoSuchElementException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return ResponseEntity.status(404).body("Student not Exist!");
 		}
 	}
 }
