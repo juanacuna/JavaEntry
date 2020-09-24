@@ -27,18 +27,22 @@ import io.people.api.services.StudentService;
 @RestController
 public class StudentController {
 
+	//Injection of Student Service
 	@Autowired
 	private StudentService studentService;
 	
+	//Injection of Course Service
 	@Autowired
 	private CourseService courseService;
 	
+	// This method returns all students and use HttpHeaders (headers)
 	@GetMapping("/students/all")
 	public ResponseEntity<?>  allStudents(){
 		return ResponseEntity.ok().headers(studentService.httpHeader())
 				.body(studentService.allStundents());
 	}
 	
+	// This method returns all students and use HttpHeaders (headers), paged by 5(default) or more items and can be sorted by id(default)
 	@GetMapping("/students")
 	public ResponseEntity<Page<Student>> studentsPage(@RequestParam Optional<Integer> page,
 									  @RequestParam Optional<String> sortBy){
@@ -47,6 +51,7 @@ public class StudentController {
 						5, Sort.Direction.ASC, sortBy.orElse("id"))));
 	}
 	
+	// This method call and show a Student by Id. If not exist return 404 status 
 	@GetMapping("/students/{id}")
 	public ResponseEntity<?> getStudent(@PathVariable ("id") Long id) {
 		try {
@@ -57,6 +62,9 @@ public class StudentController {
 		} 
 	}
 	
+	// This method is used for save a new Course item,
+	// Check if RUT is Valid, age is >19 and if course exist
+	//if is Success return 201 status
 	@PostMapping("/students")
 	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
 		if (studentService.validRut(student.getRut())) {
@@ -75,6 +83,9 @@ public class StudentController {
 		}
 	}
 	
+	// This method is used for Update a  Course find by Id,
+	// Check if RUT is Valid, age is >19 and if course exist
+	//if is Success return 201 status
 	@PutMapping("/students/{id}")
 	public ResponseEntity<?> delStudent(@Valid @RequestBody Student student,
 						   @PathVariable ("id") Long id) {
@@ -87,7 +98,6 @@ public class StudentController {
 					s.setLastName(student.getLastName());
 					s.setAge(student.getAge());
 					s.setCourse(student.getCourse());
-					Course c = courseService.getCourseByName(student.getCourse());
 					studentService.saveStudent(s);
 					return ResponseEntity.status(200).headers(studentService.httpHeader()).body("Updated Ok!");
 				} catch (NoSuchElementException e) {
@@ -102,7 +112,7 @@ public class StudentController {
 					.status(400).body("Digit validator does not match the rut received or the format is invalid");
 		}
 	}
-	
+	// This method find and delete a Student, if not exist return a 404 status.
 	@DeleteMapping("/students/{id}")
 	public ResponseEntity<?> delStudent(@PathVariable ("id") Long id) {
 		try {

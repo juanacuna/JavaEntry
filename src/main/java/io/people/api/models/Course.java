@@ -16,6 +16,8 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+
+// creation of the courses table and Course Entity
 @Entity
 @Table(name="courses")
 public class Course {
@@ -26,6 +28,8 @@ public class Course {
 	private String name;
 	@Size(max = 4, message = "Course code should be up to 4 characters")
 	private String code;
+	
+	//Simple relationship with the students table
 	@OneToMany(cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private List<Student> students = new ArrayList<>();
@@ -34,7 +38,7 @@ public class Course {
 	private Date createdAt;
 	private Date updatedAt;
 	
-	
+	// Constructor
 	public Course() {
 	}
 
@@ -48,6 +52,7 @@ public class Course {
 		this.updatedAt = new Date();
 	}
 
+	// Getters and Setters
 	public Long getId() {
 		return id;
 	}
@@ -96,6 +101,7 @@ public class Course {
 		this.students = students;
 	}
 	
+	// Method for remove Student from Course List when is deleted
 	public void removeStudent(Student s) {
 		for (int i = 0; i < this.students.size(); i++) {
 			Student student = this.students.get(i);

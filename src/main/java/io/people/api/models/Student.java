@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
 
+//creation of the students table and Student Entity
 @Entity
 @Table(name="students")
 public class Student {
@@ -23,6 +24,7 @@ public class Student {
 	private String rut;
 	private String name;
 	private String lastName;
+	//Age Validation >19
 	@Min(value= 19, message = "Age must be greater than 18 years")
 	private Integer age;
 	private String course;
@@ -31,6 +33,7 @@ public class Student {
 	private Date createdAt;
 	private Date updatedAt;
 	
+	// Constructor
 	public Student() {
 	}
 	
@@ -44,6 +47,7 @@ public class Student {
 		this.updatedAt = new Date();
 	}
 
+	//Getters and Setters
 	public Long getId() {
 		return id;
 	}

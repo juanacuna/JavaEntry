@@ -13,17 +13,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class ApiBasicAuthorization extends WebSecurityConfigurerAdapter{
 
-	@Override
+	//Overwrite the Authentication_config method and set a new user / password / role
+	@Override 
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
 		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder().encode("admin1234")).roles("ADMIN");
 	}
 	
-	@Override
+	//Overwrite the HttpSecurity_config method and let access ADMIN to the user logged
+	@Override 
 	protected void configure(HttpSecurity http) throws Exception{
 		http.csrf().disable().authorizeRequests().antMatchers("/***").hasRole("ADMIN").
 		anyRequest().authenticated().and().httpBasic();
 	}
 	
+	// Enable Encrypt to the password
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

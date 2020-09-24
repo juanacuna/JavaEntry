@@ -12,6 +12,7 @@ import io.people.api.models.Student;
 @Repository
 public interface StudentRepo extends JpaRepository<Student, Long>{
 
-	List<Student> findAll();
-	Page<Student> findAll(Pageable pageable);
+	List<Student> findAll(); //Returns a list of Students 
+	
+	Page<Student> findAll(Pageable pageable); // Returns a paged list of Students
 }

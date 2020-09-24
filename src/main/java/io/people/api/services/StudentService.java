@@ -16,29 +16,35 @@ import io.people.api.repositories.StudentRepo;
 @Service
 public class StudentService {
 
-	@Autowired
+	@Autowired //Injection of StudentRepo
 	private StudentRepo studentRepo;
 	
+	// Service for List all Students
 	public List<Student> allStundents(){
 		return studentRepo.findAll();
 	}
 	
+	//Service for List all Students (paged)
 	public Page<Student> allStudents(Pageable pageable){
 		return studentRepo.findAll(pageable);
 	}
 	
+	// Service for get a Student finding by Id
 	public Student getStudent(Long id) {
 		return studentRepo.findById(id).get();
 	}
 	
+	// Service for Save a New Student
 	public void saveStudent(Student s) {
 		studentRepo.save(s);
 	}
 	
+	// Service for Delete a Student finding by Id
 	public void delStudent(Long id) {
 		studentRepo.deleteById(id);
 	}
-
+	
+	//Service to validate the RUT of the student
 	public boolean validRut(String rut) {
 		boolean isValid = false;
 		if(rut != null && rut.trim().length() > 0) {
@@ -60,6 +66,7 @@ public class StudentService {
 		return isValid;
 	}
 	
+	// Service for set HttpHeaders (Accept and ContentType)
 	public HttpHeaders httpHeader() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

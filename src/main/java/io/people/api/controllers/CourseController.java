@@ -26,16 +26,18 @@ import io.people.api.services.CourseService;
 @RestController
 public class CourseController {
 
+	//Injection of Course Service
 	@Autowired
 	private CourseService courseService;
 	
+	// This method returns all courses and use HttpHeaders (headers)
 	@GetMapping("/courses/all")
 	public ResponseEntity<?> allCourse() {
 		return ResponseEntity.ok().headers(courseService.httpHeader())
 				.body(courseService.allCourses());
 	}
 	
-	
+	// This method returns all courses and use HttpHeaders (headers), paged by 5(default) or more items and can be sorted by name, code or id(default)
 	@GetMapping("/courses")
 	public ResponseEntity<Page<Course>> coursesPage(@RequestParam Optional<Integer> page,
 								   @RequestParam Optional <String> sortBy){
@@ -43,6 +45,7 @@ public class CourseController {
 				page.orElse(0), 5, Sort.Direction.ASC, sortBy.orElse("id"))));
 	}
 	
+	// This method call and show a course by Id. If not exist return 404 status
 	@GetMapping("/courses/{id}")
 	public ResponseEntity<?> getCourse(@PathVariable Long id) {
 		try {
@@ -53,12 +56,14 @@ public class CourseController {
 		}
 	}
 	
+	// This method is used for save a new Course item, if is Success return 201 status
 	@PostMapping("/courses")
 	public ResponseEntity<?> addCourse(@Valid @RequestBody Course course) {
 		courseService.saveCourse(course);
 		return ResponseEntity.status(201).headers(courseService.httpHeader()).body("Created Ok!");
 	}
 	
+	// This method call and Update a Course by Id.  If not exist return 404 status
 	@PutMapping("/courses/{id}")
 	public ResponseEntity<?> updateCourse(@Valid @RequestBody Course course,
 							 @PathVariable ("id") Long id) {
@@ -73,6 +78,7 @@ public class CourseController {
 		}
 	}
 	
+	// This method find a course by id and delete him. If  not exist return 404 status
 	@DeleteMapping("/courses/{id}")
 	public ResponseEntity<?> delCourse(@PathVariable ("id") Long id) {
 		try {
