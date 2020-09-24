@@ -1,24 +1,19 @@
 package io.people.api.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
+//creation of the students table and Student Entity
 @Entity
 @Table(name="students")
 public class Student {
@@ -29,6 +24,7 @@ public class Student {
 	private String rut;
 	private String name;
 	private String lastName;
+	//Age Validation >19
 	@Min(value= 19, message = "Age must be greater than 18 years")
 	private Integer age;
 	private String course;
@@ -37,14 +33,7 @@ public class Student {
 	private Date createdAt;
 	private Date updatedAt;
 	
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "courses_students",
-			joinColumns = @JoinColumn(name = "student_id"),
-			inverseJoinColumns = @JoinColumn(name = "course_id"))
-	private List<Course> signups;
-	
+	// Constructor
 	public Student() {
 	}
 	
@@ -58,6 +47,7 @@ public class Student {
 		this.updatedAt = new Date();
 	}
 
+	//Getters and Setters
 	public Long getId() {
 		return id;
 	}
@@ -122,12 +112,4 @@ public class Student {
 		this.updatedAt = updatedAt;
 	}
 
-	public List<Course> getSignups() {
-		return signups;
-	}
-
-	public void setSignups(List<Course> signups) {
-		this.signups = signups;
-	}
-	
 }

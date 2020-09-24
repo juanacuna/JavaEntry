@@ -1,22 +1,23 @@
 package io.people.api.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+
+// creation of the courses table and Course Entity
 @Entity
 @Table(name="courses")
 public class Course {
@@ -28,18 +29,16 @@ public class Course {
 	@Size(max = 4, message = "Course code should be up to 4 characters")
 	private String code;
 	
+	//Simple relationship with the students table
+	@OneToMany(cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private List<Student> students = new ArrayList<>();
+	
 	@Column(updatable = false)
 	private Date createdAt;
 	private Date updatedAt;
 	
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "courses_students",
-			joinColumns = @JoinColumn(name = "course_id"),
-			inverseJoinColumns = @JoinColumn(name = "student_id"))
-	private List<Student> signups;
-	
+	// Constructor
 	public Course() {
 	}
 
@@ -53,6 +52,7 @@ public class Course {
 		this.updatedAt = new Date();
 	}
 
+	// Getters and Setters
 	public Long getId() {
 		return id;
 	}
@@ -93,11 +93,23 @@ public class Course {
 		this.updatedAt = updatedAt;
 	}
 
-	public List<Student> getSignups() {
-		return signups;
+	public List<Student> getStudents() {
+		return students;
 	}
 
-	public void setSignups(List<Student> signups) {
-		this.signups = signups;
+	public void setStudents(List<Student> students) {
+		this.students = students;
 	}
+	
+	// Method for remove Student from Course List when is deleted
+	public void removeStudent(Student s) {
+		for (int i = 0; i < this.students.size(); i++) {
+			Student student = this.students.get(i);
+			if (student.getId() == s.getId()) {
+				this.students.remove(i);
+				return;
+			}
+		}
+	}
+
 }

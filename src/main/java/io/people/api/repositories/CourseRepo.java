@@ -12,6 +12,11 @@ import io.people.api.models.Course;
 @Repository
 public interface CourseRepo extends JpaRepository<Course, Long>{
 	
-	List<Course> findAll();
-	Page<Course> findAll(Pageable pageable);
+	List<Course> findAll(); //Returns a list of Courses 
+	
+	Page<Course> findAll(Pageable pageable); // Returns a paged list of courses
+	
+	Boolean existsByName(String name); //Find by Course name and Returns if a course exists (true or false)
+	
+	Course getByName(String name); // Find by Course_name and Return a Course 
 }
