@@ -1,0 +1,10 @@
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/services/CourseService.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/repositories/CourseRepo.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/models/Course.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/models/Student.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/ApiCoursesApplication.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/controllers/StudentController.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/services/StudentService.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/security/ApiBasicAuthorization.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/repositories/StudentRepo.java
+/Users/jca/Github/JavaEntry/src/main/java/io/people/api/controllers/CourseController.java
